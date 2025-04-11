@@ -1,0 +1,21 @@
+* {
+	background-color: var(--css-background-color);
+}
+
+html, body {
+	overflow: hidden;
+}
+
+svg {
+	display: block;		/* override inline to eliminate unwanted vertical displacements */
+}
+
+button, svg {
+	&:focus {
+		outline: none;
+	}
+}
+
+div, svg, span, input {
+	background-color: transparent;
+}
