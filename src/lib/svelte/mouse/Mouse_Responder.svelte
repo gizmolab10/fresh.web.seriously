@@ -8,7 +8,7 @@
 	import { onMount } from 'svelte';
 	interface Props {
 		handle_isHit?: () => {flag: boolean} | null;
-		handle_mouse_state?: any;
+		handle_mouse_state?: Handle_Result<S_Mouse>;
 		height?: any;
 		width?: any;
 		origin?: Point | null;
@@ -28,7 +28,7 @@
 
 	let {
 		handle_isHit = null,
-		handle_mouse_state = Handle_Result<S_Mouse>,
+		handle_mouse_state = (s_mouse: S_Mouse) => {},
 		height = k.default_buttonSize,
 		width = k.default_buttonSize,
 		origin = null,

@@ -148,18 +148,26 @@ export default class Layout {
 			c.eraseDB -= 1;
 			w_ancestries_expanded.set([]);
 		} else {
-			const expanded = p.ancestries_readDB_key(this.expanded_key) ?? p.ancestries_readDB_key('expanded');	// backwards compatible with 'expanded' key
+			const expanded = p.ancestries_readDB_key(this.expanded_key) ?? p.ancestries_readDB_key('expanded');
 			debug.log_expand(`  READ (${get(w_t_database)}): "${this.ids_forDB(expanded)}"`);
 			w_ancestries_expanded.set(expanded);
 		}
-		setTimeout(() => {
-			w_ancestries_expanded.subscribe((array: Array<Ancestry>) => {
-				if (array.length > 0) {
+		
+		let updateTimeout: NodeJS.Timeout | null = null;
+		w_ancestries_expanded.subscribe((array: Array<Ancestry> | null) => {
+			if (array && array.length > 0) {
+				// Clear any pending update
+				if (updateTimeout) {
+					clearTimeout(updateTimeout);
+				}
+				
+				// Debounce the update
+				updateTimeout = setTimeout(() => {
 					debug.log_expand(`  WRITING (${get(w_t_database)}): "${this.ids_forDB(array)}"`);
 					p.ancestries_writeDB_key(array, this.expanded_key);
-				}
-			});
-		}, 100);
+				}, 100);
+			}
+		});
 	}
 
 	restore_focus() {

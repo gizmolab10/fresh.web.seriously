@@ -6,8 +6,9 @@
 	import { w_background_color } from '../../ts/common/Stores';
 	import Identifiable from '../../ts/runtime/Identifiable';
 	// import Segmented from '../mouse/Segmented.svelte';
-	// import Button from '../mouse/Button.svelte';
+	import Button from '../mouse/Button.svelte';
 	// import SVGD3 from '../kit/SVGD3.svelte';
+	import { run } from 'svelte/legacy';
 	import { onMount } from 'svelte';
 	const size_small = k.default_buttonSize;
 	const details_top = k.dot_size / 2;
@@ -88,7 +89,7 @@
 	}
 
 </script>
-<!--
+
 {#if Object.values(es_control_byType).length > 0}
 	{#key width}
 		<div id='controls'
@@ -107,9 +108,14 @@
 						center={new Point(lefts[0], details_top + 3)}
 						es_button={es_control_byType[T_Control.details]}
 						closure={(s_mouse) => handle_mouse_state_forControl_Type(s_mouse, T_Control.details)}>
-						<img src='settings.svg' alt='circular button' width={size_small}px height={size_small}px/>
+						<img src='/settings.svg' alt='circular button' width='{size_small}px' height='{size_small}px'/>
 					</Button>
 				{/key}
+			{/if}
+		</div>
+	{/key}
+{/if}
+				<!--
 				{#key $w_t_graph}
 					<Segmented
 						origin={Point.x(30)}
@@ -228,5 +234,4 @@
 			{/key}
 		</div>
 	{/key}
-{/if}
--->
+{/if} -->

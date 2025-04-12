@@ -5,7 +5,6 @@ import { p } from '../managers/Preferences';
 import { k } from '../common/Constants';
 import DBCommon from '../dbs/DBCommon';
 import { get } from 'svelte/store';
-// Lazy load database instances
 let dbAirtable: DBCommon;
 let dbFirebase: DBCommon;
 let dbLocal: DBCommon;
@@ -26,21 +25,34 @@ export default class Databases {
 			this.db_set_accordingToType(type);
 			w_t_database.set(type);
 		}
-		this.db_now.queryStrings_apply();
+		this.db_now?.queryStrings_apply();
 	}
 
 	constructor() {
 		let done = false;
+		let unsubscribe: () => void;
+		let updateTimeout: NodeJS.Timeout | null = null;
+		
 		setTimeout(async () => {
 			await this.db_set_accordingToType(p.read_key(T_Preference.db) ?? 'firebase');
-			w_t_database.subscribe(async (type: string) => {
-				if (!!type && (!done || (type && this.db_now.t_database != type))) {
+			unsubscribe = w_t_database.subscribe(async (type: string) => {
+				if (!!type && (!done || (type && this.db_now?.t_database != type))) {
 					done = true;
-					setTimeout(async () => {
+					if (unsubscribe) unsubscribe();
+					
+					// Clear any pending update
+					if (updateTimeout) {
+						clearTimeout(updateTimeout);
+					}
+					
+					// Debounce the update
+					updateTimeout = setTimeout(async () => {
 						await this.db_set_accordingToType(type);
 						p.write_key(T_Preference.db, type);
-						await this.db_now.hierarchy_setup_fetch_andBuild();
-					}, 0);
+						if (this.db_now) {
+							await this.db_now.hierarchy_setup_fetch_andBuild();
+						}
+					}, 100); // Add a small delay to batch updates
 				}
 			});
 		}, 0);
@@ -58,7 +70,7 @@ export default class Databases {
 	}
 
 	db_next_get(forward: boolean): T_Database {
-		switch (this.db_now.t_database) {
+		switch (get(w_t_database)) {
 			case T_Database.local:	  return forward ? T_Database.firebase : T_Database.test;
 			case T_Database.firebase: return forward ? T_Database.airtable : T_Database.local;
 			case T_Database.airtable: return forward ? T_Database.test	   : T_Database.firebase;
@@ -96,10 +108,10 @@ export default class Databases {
 	}
 
 	get startupExplanation(): string {
-		const type = this.db_now.t_database;
+		const type = get(w_t_database);
 		let from = k.empty;
 		switch (type) {
-			case T_Database.firebase: from = `, from ${this.db_now.idBase}`; break;
+			case T_Database.firebase: from = `, from ${this.db_now?.idBase}`; break;
 			case T_Database.test:	  return k.empty;
 		}
 		return `(loading your ${type} data${from})`;

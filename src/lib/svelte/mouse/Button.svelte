@@ -1,14 +1,14 @@
 <script lang='ts'>
 	import { k, u, ux, Rect, Point, colors, T_Layer } from '../../ts/common/Global_Imports';
 	import { w_thing_fontFamily, w_background_color } from '../../ts/common/Stores';
-	import { S_Element, Svelte_Wrapper } from '../../ts/common/Global_Imports';
-	import Identifiable from '../../ts/runtime/Identifiable';
+	import { S_Mouse, S_Element, Svelte_Wrapper } from '../../ts/common/Global_Imports';
 	import type { Handle_Result } from '../../ts/common/Types';
+	import Identifiable from '../../ts/runtime/Identifiable';
 	import Mouse_Responder from './Mouse_Responder.svelte';
 	import { onMount } from 'svelte';
 	interface Props {
 		background_color?: any;
-		closure?: any;
+		closure?: Handle_Result<S_Mouse>;
 		border_color?: any;
 		height?: any;
 		width?: any;
@@ -27,7 +27,7 @@
 
 	let {
 		background_color = $bindable($w_background_color),
-		closure = Handle_Result<S_Mouse>,
+		closure = (s_mouse: S_Mouse) => {},
 		border_color = colors.default,
 		height = k.default_buttonSize,
 		width = k.default_buttonSize,

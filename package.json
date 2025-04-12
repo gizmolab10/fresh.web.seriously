@@ -6,6 +6,7 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
+		"build:bubble": "vite build --config vite.bubble.config.ts",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -24,6 +25,9 @@
 		"airtable": "^0.12.2",
 		"color2k": "^2.0.3",
 		"firebase": "^11.6.0",
+		"import": "^0.0.6",
+		"resolve": "^1.22.10",
+		"svelte-awesome-color-picker": "^4.0.1",
 		"typed-signals": "^3.0.0",
 		"uuid": "^11.1.0"
 	}
